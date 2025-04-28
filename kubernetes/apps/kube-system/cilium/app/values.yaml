@@ -3,12 +3,10 @@ autoDirectNodeRoutes: true
 bandwidthManager:
   bbr: true
   enabled: true
-bgpControlPlane:
-  enabled: true
 bpf:
   datapathMode: netkit
   masquerade: true
-  preallocateMaps: true
+  preallocateMaps: false
 bpfClockProbe: true
 cgroup:
   autoMount:
@@ -18,12 +16,11 @@ cluster:
   id: 1
   name: main
 cni:
-  exclusive: false
+  exclusive: true
 dashboards:
   enabled: true
   annotations:
     grafana_folder: Cilium
-devices: bond+
 enableRuntimeDeviceDetection: true
 endpointRoutes:
   enabled: true
@@ -45,9 +42,6 @@ kubeProxyReplacement: true
 kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
 l2announcements:
   enabled: false
-loadBalancer:
-  algorithm: maglev
-  mode: dsr
 localRedirectPolicy: true
 operator:
   dashboards:
@@ -58,7 +52,7 @@ operator:
     enabled: true
     serviceMonitor:
       enabled: true
-  replicas: 2
+  replicas: 1
   rollOutPods: true
 prometheus:
   enabled: true

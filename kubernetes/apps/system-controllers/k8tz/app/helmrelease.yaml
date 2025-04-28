@@ -19,7 +19,7 @@ spec:
 
     replicaCount: 2
 
-    timezone: Europe/Amsterdam
+    timezone: America/Toronto
     cronJobTimeZone: true
 
     webhook:

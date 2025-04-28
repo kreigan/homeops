@@ -2,125 +2,98 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/budimanjojo/talhelper/master/pkg/config/schemas/talconfig.json
 clusterName: &clusterName home-ops
 
-endpoint: https://k8s.bjw-s.internal:6443
+endpoint: https://k8s.internal.kreigan.com:6443
 
 # renovate: depName=ghcr.io/siderolabs/installer datasource=docker
-talosVersion: v1.10.2
+talosVersion: v1.10.0
 # renovate: depName=ghcr.io/siderolabs/kubelet datasource=docker
-kubernetesVersion: v1.33.1
+kubernetesVersion: v1.33.0
+
+allowSchedulingOnControlPlanes: true
 
 additionalApiServerCertSans: &sans
-  - k8s.bjw-s.internal
-  - &talosControlplaneVip 10.1.1.30
+  - k8s.internal.kreigan.com
+  - &talosControlplaneVip 192.168.21.140
   - 127.0.0.1 # KubePrism
-additionalMachineCertSans: *sans
 
 cniConfig:
   name: none
 
 nodes:
-  - hostname: delta.bjw-s.internal
-    ipAddress: 10.1.1.31
+  - hostname: ruby.internal.kreigan.com
+    ipAddress: 192.168.21.131
     controlPlane: true
     nodeLabels:
       intel.feature.node.kubernetes.io/gpu: "true"
-    installDiskSelector:
-      model: Samsung SSD 870
+    installDisk: /dev/sda
     networkInterfaces:
-      - interface: bond0
-        bond:
-          mode: active-backup
-          deviceSelectors:
-            - hardwareAddr: 48:21:0b:55:c4:8a
-              driver: igc
-        dhcp: true
+      - deviceSelector:
+          hardwareAddr: bc:24:11:bd:b0:5c
+        addresses:
+          - 192.168.21.131/24
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 192.168.21.1
         vip:
           ip: *talosControlplaneVip
+      - deviceSelector:
+          physical: true # avoid recursive links
+          hardwareAddr: bc:24:11:53:99:02
+        dhcp: false
         vlans:
-          - &vlan303
-            vlanId: 303
-            mtu: 1500
-            dhcp: false
-            dhcpOptions:
-              routeMetric: 4096
-
-  - hostname: enigma.bjw-s.internal
-    ipAddress: 10.1.1.32
-    controlPlane: true
-    nodeLabels:
-      intel.feature.node.kubernetes.io/gpu: "true"
-    installDiskSelector:
-      model: Samsung SSD 870
-    networkInterfaces:
-      - interface: bond0
-        bond:
-          mode: active-backup
-          deviceSelectors:
-            - hardwareAddr: 48:21:0b:55:dc:7b
-              driver: igc
-        dhcp: true
-        vip:
-          ip: *talosControlplaneVip
-        vlans:
-          - *vlan303
-
-  - hostname: felix.bjw-s.internal
-    ipAddress: 10.1.1.33
-    controlPlane: true
-    nodeLabels:
-      intel.feature.node.kubernetes.io/gpu: "true"
-    installDiskSelector:
-      model: Samsung SSD 870
-    networkInterfaces:
-      - interface: bond0
-        bond:
-          mode: active-backup
-          deviceSelectors:
-            - hardwareAddr: 48:21:0b:56:09:47
-              driver: igc
-        dhcp: true
-        vip:
-          ip: *talosControlplaneVip
-        vlans:
-          - *vlan303
+          - vlanId: 55
+            addresses:
+              - "10.1.5.3/24"
+            mtu: 9000
+          - vlanId: 100
+            addresses:
+              - "10.1.10.2/24"
+            mtu: 9000
+    userVolumes:
+      - name: extra
+        provisioning:
+          diskSelector:
+            match: "!disk.rotational && !system_disk"
+          maxSize: 100GB
+        filesystem:
+          type: xfs
 
 controlPlane:
   nodeLabels:
     topology.kubernetes.io/region: *clusterName
     topology.kubernetes.io/zone: m
 
+  machineFiles:
+    - op: create
+      path: /etc/cri/conf.d/20-customization.part
+      content: |
+        [plugins]
+          [plugins."io.containerd.grpc.v1.cri"]
+            enable_unprivileged_ports = true
+            enable_unprivileged_icmp = true
+        [plugins."io.containerd.grpc.v1.cri".containerd]
+          discard_unpacked_layers = false
+        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+          discard_unpacked_layers = false
+
   schematic:
     customization:
+      extraKernelArgs:
+        - intel_iommu=on # PCI Passthrough
+        - iommu=pt # PCI Passthrough
       systemExtensions:
         officialExtensions:
-          - siderolabs/gasket-driver
           - siderolabs/i915
           - siderolabs/intel-ucode
-          - siderolabs/thunderbolt
+          - siderolabs/mei
+          - siderolabs/qemu-guest-agent
+
+  nameservers:
+    - 192.168.21.150
+
+  certSANs: *sans
 
   patches:
-    # Configure containerd
-    - |-
-      machine:
-        files:
-          - op: create
-            path: /etc/cri/conf.d/20-customization.part
-            content: |
-              [plugins]
-                [plugins."io.containerd.grpc.v1.cri"]
-                  enable_unprivileged_ports = true
-                  enable_unprivileged_icmp = true
-              [plugins."io.containerd.grpc.v1.cri".containerd]
-                discard_unpacked_layers = false
-              [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
-                discard_unpacked_layers = false
-
-    # Disable search domain everywhere
-    - |-
-      machine:
-        network:
-          disableSearchDomain: true
-
     # Enable host dns
     - |-
       machine:
@@ -130,19 +103,6 @@ controlPlane:
             resolveMemberNames: true
             forwardKubeDNSToHost: false
 
-    # Mount openebs-hostpath in kubelet
-    - |-
-      machine:
-        kubelet:
-          extraMounts:
-            - destination: /var/mnt/extra
-              type: bind
-              source: /var/mnt/extra
-              options:
-                - rbind
-                - rshared
-                - rw
-
     # Configure kubelet
     - |-
       machine:
@@ -151,7 +111,7 @@ controlPlane:
             maxPods: 150
           nodeIP:
             validSubnets:
-                - 10.1.1.0/24
+                - 192.168.21.0/24
 
     # Enable MutatingAdmissionPolicy
     - |-
@@ -164,7 +124,6 @@ controlPlane:
     # Configure cluster
     - |-
       cluster:
-        allowSchedulingOnControlPlanes: true
         coreDNS:
             disabled: true
         proxy:
@@ -189,7 +148,7 @@ controlPlane:
       cluster:
         etcd:
           advertisedSubnets:
-            - 10.1.1.0/24
+            - 192.168.21.0/24
 
     # Configure NFS mount options
     - |
@@ -210,9 +169,9 @@ controlPlane:
       machine:
         network:
           extraHostEntries:
-            - ip: 10.1.1.30
+            - ip: 192.168.21.140
               aliases:
-                - k8s.bjw-s.internal
+                - k8s.internal.kreigan.com
 
     # Configure custom sysctls
     - |-
@@ -231,8 +190,6 @@ controlPlane:
           rules:
             # Intel GPU
             - SUBSYSTEM=="drm", KERNEL=="renderD*", GROUP="44", MODE="0660"
-            # Coral Edge M.2 TPU
-            - SUBSYSTEM=="apex", KERNEL=="apex*", GROUP="44", MODE="0660"
 
     # Disable default API server admission plugins.
     - |-
