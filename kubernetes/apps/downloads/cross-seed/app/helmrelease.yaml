@@ -33,7 +33,7 @@ spec:
             fsGroup: 2000
             fsGroupChangePolicy: "OnRootMismatch"
             supplementalGroups:
-              - 65542 # gladius:external-services
+              - 65542 # storage:external-services
 
         containers:
           app:
@@ -85,8 +85,8 @@ spec:
             readOnly: true
       media:
         type: nfs
-        server: gladius.bjw-s.internal
-        path: /mnt/tank/Media
+        server: nfs.internal.kreigan.com
+        path: /storage/media
         advancedMounts:
           cross-seed:
             app:

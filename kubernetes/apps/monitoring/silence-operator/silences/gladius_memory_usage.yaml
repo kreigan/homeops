@@ -9,5 +9,5 @@ spec:
       value: NodeMemoryHighUtilization
       isRegex: false
     - name: instance
-      value: gladius.bjw-s.internal:9100
+      value: nfs.internal.kreigan.com:9100
       isRegex: false

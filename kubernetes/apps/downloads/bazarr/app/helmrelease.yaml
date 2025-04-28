@@ -31,7 +31,7 @@ spec:
             fsGroup: 2000
             fsGroupChangePolicy: "OnRootMismatch"
             supplementalGroups:
-              - 65542 # gladius:external-services
+              - 65542 # storage:external-services
 
         containers:
           app:
@@ -79,15 +79,15 @@ spec:
         existingClaim: bazarr-config
       media:
         type: nfs
-        server: gladius.bjw-s.internal
-        path: /mnt/tank/Media
+        server: nfs.internal.kreigan.com
+        path: /storage/media
         globalMounts:
           - path: /data/nas-media
 
     route:
       app:
         hostnames:
-          - bazarr.bjw-s.dev
+          - bazarr.kreigan.com
         parentRefs:
           - name: internal
             namespace: kube-system

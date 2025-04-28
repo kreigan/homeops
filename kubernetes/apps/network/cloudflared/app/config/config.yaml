@@ -1,10 +1,10 @@
 ---
 originRequest:
-  originServerName: ingress-ext.bjw-s.dev
+  originServerName: ingress-ext.kreigan.com
 
 ingress:
-  - hostname: bjw-s.dev
+  - hostname: kreigan.com
     service: &svc https://cilium-gateway-external.kube-system.svc.cluster.local
-  - hostname: "*.bjw-s.dev"
+  - hostname: "*.kreigan.com"
     service: *svc
   - service: http_status:404

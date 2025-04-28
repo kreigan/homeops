@@ -80,7 +80,7 @@ spec:
     route:
       app:
         hostnames:
-          - alertmanager.bjw-s.dev
+          - alertmanager.kreigan.com
         parentRefs:
           - name: internal
             namespace: kube-system

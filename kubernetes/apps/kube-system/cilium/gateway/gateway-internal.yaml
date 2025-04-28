@@ -5,7 +5,7 @@ kind: Gateway
 metadata:
   name: internal
   annotations:
-    external-dns.alpha.kubernetes.io/target: &hostname ingress-int.bjw-s.dev
+    external-dns.alpha.kubernetes.io/target: &hostname ingress-int.kreigan.com
 spec:
   gatewayClassName: cilium
   addresses:
@@ -18,18 +18,18 @@ spec:
     - name: http
       protocol: HTTP
       port: 80
-      hostname: "*.bjw-s.dev"
+      hostname: "*.kreigan.com"
       allowedRoutes:
         namespaces:
           from: All
     - name: https
       protocol: HTTPS
       port: 443
-      hostname: "*.bjw-s.dev"
+      hostname: "*.kreigan.com"
       allowedRoutes:
         namespaces:
           from: All
       tls:
         certificateRefs:
           - kind: Secret
-            name: bjw-s-dev-tls
+            name: kreigan-com-tls

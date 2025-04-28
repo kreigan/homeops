@@ -3,13 +3,13 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: "bjw-s-dev"
+  name: "kreigan-com"
 spec:
-  secretName: "bjw-s-dev-tls"
+  secretName: "kreigan-com-tls"
   issuerRef:
     name: letsencrypt-production
     kind: ClusterIssuer
-  commonName: "bjw-s.dev"
+  commonName: "kreigan.com"
   dnsNames:
-    - "bjw-s.dev"
-    - "*.bjw-s.dev"
+    - "kreigan.com"
+    - "*.kreigan.com"

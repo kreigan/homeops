@@ -6,7 +6,7 @@ metadata:
   name: github-webhook
 spec:
   hostnames:
-    - flux-webhook.bjw-s.dev
+    - flux-webhook.kreigan.com
   parentRefs:
     - name: external
       namespace: kube-system

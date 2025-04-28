@@ -26,7 +26,7 @@ spec:
         runAsGroup: 2000
         runAsNonRoot: true
         supplementalGroups:
-          - 65542 # gladius:external-services
+          - 65542 # storage:external-services
 
     controllers:
       prune:
@@ -151,8 +151,8 @@ spec:
             readOnly: true
       downloads:
         type: nfs
-        server: gladius.bjw-s.internal
-        path: /mnt/tank/Media
+        server: nfs.internal.kreigan.com
+        path: /storage/media
         globalMounts:
           - path: /data/nas-media/Downloads/qbittorrent
             subPath: Downloads/qbittorrent

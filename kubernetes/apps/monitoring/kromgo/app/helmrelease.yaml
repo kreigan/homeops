@@ -95,7 +95,7 @@ spec:
     route:
       app:
         hostnames:
-          - kromgo.bjw-s.dev
+          - kromgo.kreigan.com
         parentRefs:
           - name: external
             namespace: kube-system

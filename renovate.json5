@@ -2,10 +2,10 @@
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   extends: [
     "github>bjw-s/renovate-config",
-    "github>bjw-s-labs/home-ops//.renovate/groups.json5",
-    "github>bjw-s-labs/home-ops//.renovate/versioning.json5",
-    "github>bjw-s-labs/home-ops//.renovate/autoMerge.json5",
-    "github>bjw-s-labs/home-ops//.renovate/grafanaDashboards.json5",
+    "github>kreigan/homeops//.renovate/groups.json5",
+    "github>kreigan/homeops//.renovate/versioning.json5",
+    "github>kreigan/homeops//.renovate/autoMerge.json5",
+    "github>kreigan/homeops//.renovate/grafanaDashboards.json5",
   ],
   flux: {
     managerFilePatterns: ["/^kubernetes/.+\\.ya?ml$/"],

@@ -143,7 +143,7 @@ spec:
         main:
           enabled: true
           hostnames:
-            - prometheus.bjw-s.dev
+            - prometheus.kreigan.com
           parentRefs:
             - name: internal
               namespace: kube-system

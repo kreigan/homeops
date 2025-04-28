@@ -84,7 +84,7 @@ spec:
     route:
       app:
         hostnames:
-          - autobrr.bjw-s.dev
+          - autobrr.kreigan.com
         parentRefs:
           - name: internal
             namespace: kube-system

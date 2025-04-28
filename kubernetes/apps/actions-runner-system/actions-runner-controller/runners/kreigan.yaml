@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: arc-bjw-s-labs-home-ops
+  name: arc-kreigan
 spec:
   interval: 30m
   chartRef:
@@ -17,10 +17,10 @@ spec:
     - name: openebs
       namespace: openebs
   values:
-    githubConfigUrl: https://github.com/bjw-s-labs/home-ops
+    githubConfigUrl: https://github.com/kreigan
 
     minRunners: 0
-    maxRunners: 2
+    maxRunners: 6
 
     containerMode:
       type: kubernetes
@@ -37,6 +37,9 @@ spec:
       namespace: actions-runner-system
 
     template:
+      metadata:
+        labels:
+          app.kubernetes.io/name: arc-kreigan-runner
       spec:
         containers:
           - name: runner
@@ -46,19 +49,6 @@ spec:
             env:
               - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
                 value: "false"
-              - name: NODE_IP
-                valueFrom:
-                  fieldRef:
-                    fieldPath: status.hostIP
-            volumeMounts:
-              - mountPath: /var/run/secrets/talos.dev
-                name: talos
-                readOnly: true
-        serviceAccountName: actions-runner
-        volumes:
-          - name: talos
-            secret:
-              secretName: actions-runner
 
   valuesFrom:
     - kind: Secret

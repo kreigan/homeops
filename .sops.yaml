@@ -1,23 +1,23 @@
 ---
 keys:
-  - &user_bjw-s age1uk0y2ahfavgsgqvrtg5a22w5gytpdmjuatxtcw6kntmxhlcgreesuwzw5s
-  - &user_flux age1hawjtl6fm5czl8cun0ve7jvsmpqpn3qlxl2lnx7ndt7682tmva2qz3drfe
+  - &user_kreigan age165j834wdl949ss7rqpxytcw4hcmp3k7kakrjs9gphch3q3ag4pdqmycj78
+  - &user_flux age1xldn3fjlavef6sgjg3tg3m75cz82r7uauqmcaq6yhmdm4ge8zguqv0wzz4
 
 creation_rules:
   - path_regex: kubernetes/.*/talos/.*\.sops\.ya?ml$
     key_groups:
       - age:
-          - *user_bjw-s
+          - *user_kreigan
           - *user_flux
 
   - path_regex: kubernetes/.*\.sops\.ya?ml$
     encrypted_regex: "^(data|stringData)$"
     key_groups:
       - age:
-          - *user_bjw-s
+          - *user_kreigan
           - *user_flux
 
   - path_regex: .*\.sops\.ya?ml$
     key_groups:
       - age:
-          - *user_bjw-s
+          - *user_kreigan

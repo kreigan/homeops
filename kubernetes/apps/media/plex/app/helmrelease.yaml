@@ -29,7 +29,7 @@ spec:
             supplementalGroups:
               - 44
               - 109
-              - 65542 # gladius:external-services
+              - 65542 # storage:external-services
 
         containers:
           app:
@@ -37,7 +37,7 @@ spec:
               repository: ghcr.io/home-operations/plex
               tag: 1.41.7.9799
             env:
-              PLEX_ADVERTISE_URL: https://10.1.1.136:32400,https://plex.bjw-s.dev:443
+              PLEX_ADVERTISE_URL: https://10.1.1.136:32400,https://plex.kreigan.com:443
               PLEX_NO_AUTH_NETWORKS: 10.244.0.0/16
             probes:
               liveness: &probes
@@ -101,8 +101,8 @@ spec:
               - path: /config/Library/Application Support/Plex Media Server/Logs
       nfs-nas-media:
         type: nfs
-        server: gladius.bjw-s.internal
-        path: /mnt/tank/Media
+        server: nfs.internal.kreigan.com
+        path: /storage/media
         advancedMounts:
           plex:
             app:
@@ -118,7 +118,7 @@ spec:
     route:
       app:
         hostnames:
-          - plex.bjw-s.dev
+          - plex.kreigan.com
         parentRefs:
           - name: internal
             namespace: kube-system
