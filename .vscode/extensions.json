@@ -1,5 +1,7 @@
 {
     "recommendations": [
+        "DavidAnson.vscode-markdownlint",
+        "esbenp.prettier-vscode",
         "ms-kubernetes-tools.vscode-kubernetes-tools",
         "ms-vscode-remote.remote-containers",
         "tamasfe.even-better-toml",
