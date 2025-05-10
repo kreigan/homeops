@@ -15,8 +15,8 @@ spec:
   upgrade:
     crds: Skip
   dependsOn:
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
+    - name: openebs
+      namespace: openebs
   values:
     crds:
       enabled: false
@@ -134,7 +134,7 @@ spec:
         storageSpec:
           volumeClaimTemplate:
             spec:
-              storageClassName: ceph-block
+              storageClassName: openebs-hostpath
               resources:
                 requests:
                   storage: 55Gi

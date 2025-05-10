@@ -15,8 +15,8 @@ spec:
         name: bjw-s-labs
         namespace: flux-system
   dependsOn:
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
+    - name: openebs
+      namespace: openebs
   values:
     controllers:
       qbittorrent:

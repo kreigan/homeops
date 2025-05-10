@@ -17,8 +17,8 @@ spec:
   dependsOn:
     - name: qbittorrent
       namespace: downloads
-    - name: rook-ceph-cluster
-      namespace: rook-ceph
+    - name: openebs
+      namespace: openebs
   values:
     controllers:
       cross-seed:
