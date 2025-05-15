@@ -20,7 +20,7 @@ spec:
   values:
     controllers:
       cloudflared:
-        replicas: 2
+        replicas: 1
         strategy: RollingUpdate
 
         annotations:
@@ -43,12 +43,7 @@ spec:
             env:
               NO_AUTOUPDATE: "true"
               TUNNEL_METRICS: 0.0.0.0:8080
-              TUNNEL_ORIGIN_ENABLE_HTTP2: true
-              TUNNEL_POST_QUANTUM: true
-              TUNNEL_TRANSPORT_PROTOCOL: quic
-            envFrom:
-              - secretRef:
-                  name: cloudflared-secret
+              TUNNEL_TOKEN_FILE: /token/tunnel_token
             probes:
               liveness: &probes
                 enabled: true
@@ -75,13 +70,9 @@ spec:
                   - ALL
 
     persistence:
-      config:
-        type: configMap
-        name: cloudflared
-        globalMounts:
-          - path: /etc/cloudflared/config.yaml
-            subPath: config.yaml
-            readOnly: true
+      token:
+        type: secret
+        name: cloudflared-secret
 
     service:
       app:
