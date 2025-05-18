@@ -1,15 +1,10 @@
 ---
 receivers:
   - name: "null"
-  - name: "pushover"
-    pushover_configs:
-      - html: true
-        token_file: /etc/secrets/pushover_api_token
-        user_key_file: /etc/secrets/pushover_api_userkey
+  - name: "discord"
+    discord_configs:
+      - webhook_url_file: /etc/secrets/discord_webhook_url
         send_resolved: true
-        priority: |-
-          {{ if eq .Status "firing" }}1{{ else }}0{{ end }}
-        url_title: View in Alert Manager
         title: |-
           [{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .CommonLabels.alertname }}
         message: |-
@@ -41,12 +36,12 @@ route:
   group_wait: 30s
   group_interval: 5m
   repeat_interval: 6h
-  receiver: "pushover"
+  receiver: "discord"
   routes:
     - receiver: "null"
       matchers:
         - alertname =~ "InfoInhibitor|Watchdog"
-    - receiver: "pushover"
+    - receiver: "discord"
       matchers:
         - severity = critical
       continue: true
