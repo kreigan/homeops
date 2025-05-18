@@ -124,9 +124,9 @@ spec:
           requests:
             cpu: 100m
           limits:
-            memory: 2000M
+            memory: 1000M
         retention: 14d
-        retentionSize: 50GB
+        retentionSize: 25GB
         ruleSelectorNilUsesHelmValues: false
         scrapeConfigSelectorNilUsesHelmValues: false
         scrapeInterval: 1m # Must match interval in Grafana Helm chart
@@ -137,7 +137,8 @@ spec:
               storageClassName: openebs-hostpath
               resources:
                 requests:
-                  storage: 55Gi
+                  storage: 25Gi
+        walCompression: true
 
       route:
         main:
