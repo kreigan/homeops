@@ -3,7 +3,6 @@
   extends: [
     "github>bjw-s/renovate-config",
     "github>kreigan/homeops//.renovate/groups.json5",
-    "github>kreigan/homeops//.renovate/versioning.json5",
     "github>kreigan/homeops//.renovate/autoMerge.json5",
     "github>kreigan/homeops//.renovate/grafanaDashboards.json5",
   ],
