@@ -23,7 +23,7 @@ spec:
         type: statefulset
 
         annotations:
-          secret.reloader.stakater.com/reload: qbittorrent-secret,qbittorrent-gluetun-secret
+          secret.reloader.stakater.com/reload: qbittorrent-secret
 
         pod:
           securityContext:
@@ -33,25 +33,13 @@ spec:
               - 65542 # storage:external-services
 
         initContainers:
-          coredns:
-            image:
-              repository: mirror.gcr.io/coredns/coredns
-              tag: 1.12.1
-            args:
-              - -conf
-              - /etc/coredns/Corefile
-            restartPolicy: Always
-
           gluetun:
-            dependsOn:
-              - coredns
             image:
               repository: ghcr.io/qdm12/gluetun
               tag: v3.40.0
             env:
               DOT: "off"
-              DNS_ADDRESS: "127.0.0.2"
-              HTTP_CONTROL_SERVER_AUTH_CONFIG_FILEPATH: &gluetunAuthPath /gluetun/auth.toml
+              DNS_ADDRESS: "10.96.0.10"
               VPN_SERVICE_PROVIDER: custom
               VPN_TYPE: wireguard
               VPN_INTERFACE: wg0
@@ -60,6 +48,7 @@ spec:
               VPN_PORT_FORWARDING_PROVIDER: protonvpn
               FIREWALL_INPUT_PORTS: 8080
               FIREWALL_OUTBOUND_SUBNETS: 10.96.0.0/12,10.244.0.0/16 # Allow access to k8s subnets
+              VPN_PORT_FORWARDING_UP_COMMAND: /bin/sh -c /gluetun/scripts/forward_port.sh
             envFrom:
               - secretRef:
                   name: qbittorrent-secret
@@ -109,36 +98,9 @@ spec:
             resources:
               requests:
                 cpu: 150m
-                memory: 2048Mi
+                memory: 512Mi
               limits:
-                memory: 8192Mi
-            securityContext:
-              runAsUser: 2000
-              runAsGroup: 2000
-              runAsNonRoot: true
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities:
-                drop:
-                  - ALL
-
-          port-forward:
-            image:
-              repository: ghcr.io/bjw-s-labs/gluetun-qb-port-sync
-              tag: 0.0.4@sha256:5fd1da9f2d6509c00b6d6f4b3b7ada6fa097b8134040fc8965b6c1dc8584dc6b
-            env:
-              GLUETUN_CONTROL_SERVER_HOST: localhost
-              GLUETUN_CONTROL_SERVER_PORT: 8000
-              GLUETUN_CONTROL_SERVER_API_KEY:
-                valueFrom:
-                  secretKeyRef:
-                    name: qbittorrent-secret
-                    key: GLUETUN_CONTROL_SERVER_API_KEY
-              QBITTORRENT_HOST: localhost
-              QBITTORRENT_WEBUI_PORT: *port
-              CRON_ENABLED: true
-              CRON_SCHEDULE: "*/5 * * * *"
-              LOG_TIMESTAMP: false
+                memory: 1536Mi
             securityContext:
               runAsUser: 2000
               runAsGroup: 2000
@@ -164,12 +126,6 @@ spec:
           qbittorrent:
             app:
               - path: /config
-      empty-config:
-        type: emptyDir
-        advancedMounts:
-          qbittorrent:
-            port-forward:
-              - path: /config
       downloads:
         type: nfs
         server: nfs.internal.kreigan.com
@@ -177,23 +133,14 @@ spec:
         globalMounts:
           - path: /data/nas-media/Downloads/qbittorrent
             subPath: Downloads/qbittorrent
-      gluetun-auth:
-        type: secret
-        name: qbittorrent-gluetun-secret
+      gluetun-scripts:
+        type: configMap
+        name: gluetun-scripts
+        defaultMode: 0775
         advancedMounts:
           qbittorrent:
             gluetun:
-              - path: *gluetunAuthPath
-                subPath: auth.toml
-      coredns:
-        type: configMap
-        name: qbittorrent-coredns
-        advancedMounts:
-          qbittorrent:
-            coredns:
-              - path: /etc/coredns/Corefile
-                subPath: Corefile
-                readOnly: true
+              - path: /gluetun/scripts
       scripts:
         type: configMap
         name: qbittorrent-scripts

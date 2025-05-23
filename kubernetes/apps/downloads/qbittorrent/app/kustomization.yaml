@@ -10,9 +10,9 @@ configMapGenerator:
   - name: qbittorrent-scripts
     files:
       - scripts/xseed.sh
-  - name: qbittorrent-coredns
+  - name: gluetun-scripts
     files:
-      - ./config/Corefile
+      - scripts/forward_port.sh
 generatorOptions:
   annotations:
     kustomize.toolkit.fluxcd.io/substitute: disabled

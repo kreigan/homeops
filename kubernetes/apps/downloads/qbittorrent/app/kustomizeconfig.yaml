@@ -5,5 +5,5 @@ nameReference:
     fieldSpecs:
       - path: spec/values/persistence/scripts/name
         kind: HelmRelease
-      - path: spec/values/persistence/coredns/name
+      - path: spec/values/persistence/gluetun-scripts/name
         kind: HelmRelease
