@@ -39,8 +39,16 @@ spec:
             env:
               PLEX_BASEURL: http://plex.media.svc.cluster.local:32400
               PLEX_LOCALURL: http://plex.media.svc.cluster.local:32400
-              PLEX_USERNAME: bjw_s
-              TRAKT_USERNAME: bjw-s
+              PLEX_USERNAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: trakt-sync-secret
+                    key: PLEX_USERNAME
+              TRAKT_USERNAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: trakt-sync-secret
+                    key: TRAKT_USERNAME
             probes:
               liveness:
                 enabled: false
