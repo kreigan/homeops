@@ -37,7 +37,7 @@ spec:
               repository: ghcr.io/home-operations/plex
               tag: 1.41.7.9799
             env:
-              PLEX_ADVERTISE_URL: https://10.1.1.136:32400,https://plex.kreigan.com:443
+              PLEX_ADVERTISE_URL: https://192.168.21.170:32400,https://plex.kreigan.com:443
               PLEX_NO_AUTH_NETWORKS: 10.244.0.0/16
             probes:
               liveness: &probes
@@ -67,15 +67,15 @@ spec:
               requests:
                 cpu: 100m
               limits:
-                gpu.intel.com/i915: 1
-                memory: 9248M
+                cpu: 2000m
+                memory: 5120Mi
 
     service:
       app:
         controller: plex
         type: LoadBalancer
         annotations:
-          lbipam.cilium.io/ips: 10.1.1.136
+          lbipam.cilium.io/ips: 192.168.21.170
         ports:
           http:
             port: &port 32400
@@ -120,7 +120,7 @@ spec:
         hostnames:
           - plex.kreigan.com
         parentRefs:
-          - name: internal
+          - name: external
             namespace: kube-system
             sectionName: https
         rules:
