@@ -34,9 +34,6 @@ spec:
             image:
               repository: quay.io/prometheus/alertmanager
               tag: v0.28.1
-            ports:
-              - name: http
-                containerPort: 9093
             probes:
               liveness:
                 enabled: true
@@ -56,10 +53,9 @@ spec:
 
     service:
       app:
-        controller: alertmanager
         ports:
           http:
-            port: &port 9093
+            port: 9093
 
     persistence:
       config:
@@ -82,6 +78,4 @@ spec:
             namespace: kube-system
             sectionName: https
         rules:
-          - backendRefs:
-              - identifier: app
-                port: *port
+          - backendRefs: [{}]

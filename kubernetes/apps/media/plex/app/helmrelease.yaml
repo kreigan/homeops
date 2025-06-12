@@ -68,7 +68,6 @@ spec:
 
     service:
       app:
-        controller: plex
         type: LoadBalancer
         annotations:
           lbipam.cilium.io/ips: 192.168.21.170
@@ -117,6 +116,4 @@ spec:
             namespace: kube-system
             sectionName: https
         rules:
-          - backendRefs:
-              - identifier: app
-                port: *port
+          - backendRefs: [{}]
