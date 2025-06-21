@@ -7,5 +7,6 @@
         "tamasfe.even-better-toml",
         "redhat.vscode-yaml",
         "samuelcolvin.jinjahtml",
+        "bluebrown.yamlfmt",
     ]
 }

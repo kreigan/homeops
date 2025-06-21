@@ -23,20 +23,21 @@ releases:
     chart: cilium/cilium
     version: 1.17.4
     values:
-      - '{{ requiredEnv "ROOT_DIR" }}/kubernetes/apps/kube-system/cilium/app/values.yaml'
+      - >
+        {{ requiredEnv "ROOT_DIR" }}/kubernetes/apps/kube-system/cilium/app/values.yaml
     needs:
       - monitoring/prometheus-operator-crds
     hooks:
-      - # Wait for cilium CRDs to be available
-        events:
+      # Wait for cilium CRDs to be available
+      - events:
           - postsync
         command: bash
         args:
           - -c
-          - until kubectl get crd ciliuml2announcementpolicies.cilium.io ciliumloadbalancerippools.cilium.io &>/dev/null; do sleep 10; done
+          - until kubectl get crd ciliumbgppeeringpolicies.cilium.io ciliuml2announcementpolicies.cilium.io ciliumloadbalancerippools.cilium.io &>/dev/null; do sleep 10; done
         showlogs: true
-      - # Apply cilium network configuration
-        events:
+      # Apply cilium network configuration
+      - events:
           - postsync
         command: kubectl
         args:
@@ -53,9 +54,10 @@ releases:
     chart: oci://ghcr.io/coredns/charts/coredns
     version: 1.42.1
     values:
-      - '{{ requiredEnv "ROOT_DIR" }}/kubernetes/apps/kube-system/coredns/app/values.yaml'
+      - >
+        {{ requiredEnv "ROOT_DIR" }}/kubernetes/apps/kube-system/coredns/app/values.yaml
     needs:
-      - kube-system/cilium
+        - kube-system/cilium
 
   - name: cert-manager
     namespace: cert-manager
@@ -63,7 +65,8 @@ releases:
     chart: oci://quay.io/jetstack/charts/cert-manager
     version: v1.17.2
     values:
-      - '{{ requiredEnv "ROOT_DIR" }}/kubernetes/apps/cert-manager/cert-manager/app/values.yaml'
+      - >
+        {{ requiredEnv "ROOT_DIR" }}/kubernetes/apps/cert-manager/cert-manager/app/values.yaml
     needs:
       - kube-system/coredns
 
@@ -73,7 +76,10 @@ releases:
     chart: oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator
     version: 0.23.0
     values:
-      - '{{ requiredEnv "ROOT_DIR" }}/kubernetes/apps/flux-system/flux-operator/app/values.yaml'
+      - >
+        {{ requiredEnv "ROOT_DIR" }}/kubernetes/apps/flux-system/flux-operator/app/values.yaml
+    needs:
+      - kube-system/coredns
 
   - name: flux-instance
     namespace: flux-system
@@ -82,6 +88,7 @@ releases:
     version: 0.23.0
     wait: false
     values:
-      - '{{ requiredEnv "ROOT_DIR" }}/kubernetes/apps/flux-system/flux-operator/instance/values.yaml'
+      - >
+        {{ requiredEnv "ROOT_DIR" }}/kubernetes/apps/flux-system/flux-operator/instance/values.yaml
     needs:
       - flux-system/flux-operator
