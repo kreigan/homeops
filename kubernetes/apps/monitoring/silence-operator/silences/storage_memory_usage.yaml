@@ -1,5 +1,6 @@
 ---
-apiVersion: monitoring.giantswarm.io/v1alpha1
+# yaml-language-server: $schema=https://k8s-schemas.bjw-s.dev/observability.giantswarm.io/silence_v1alpha2.json
+apiVersion: observability.giantswarm.io/v1alpha2
 kind: Silence
 metadata:
   name: storage-memory-usage
@@ -7,7 +8,5 @@ spec:
   matchers:
     - name: alertname
       value: NodeMemoryHighUtilization
-      isRegex: false
     - name: instance
       value: nfs.internal.kreigan.com:9100
-      isRegex: false
