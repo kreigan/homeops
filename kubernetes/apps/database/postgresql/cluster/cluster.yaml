@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../../../.schemas/cnpg-cluster-schema.json
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: cloudnative-pg-cluster
+spec:
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.5
+  instances: 1
+
+  postgresql:
+    parameters:
+      shared_buffers: 128MB
+    pg_hba:
+      - host all all 192.168.21.0/24 scram-sha-256
+      - host all all 10.244.0.0/16 scram-sha-256
+
+  bootstrap:
+    initdb:
+      database: cloudnative_pg
+      owner: cloudnative_pg
+      secret:
+        name: cloudnative-pg-app
+
+  enableSuperuserAccess: true
+  superuserSecret:
+    name: cloudnative-pg-superuser
+
+  storage:
+    resizeInUseVolumes: false
+    size: 25Gi
+
+  startDelay: 300
+  stopDelay: 300
+
+  resources:
+    requests:
+      cpu: "1"
+      memory: "1Gi"
+    limits:
+      cpu: "2"
+      memory: "2Gi"
+
+  monitoring:
+    enablePodMonitor: true
+
+  managed:
+    roles:
+      - name: immich
+        login: true
+        passwordSecret:
+          name: cloudnative-pg-immich

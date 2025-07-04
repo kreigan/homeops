@@ -1,0 +1,19 @@
+---
+replicaCount: 1
+
+config:
+  clusterWide: false
+  name: cloudnative-pg-operator-config
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 100Mi
+  limits:
+    cpu: 100m
+    memory: 200Mi
+
+monitoring:
+  podMonitorEnabled: true
+  grafanaDashboard:
+    enabled: true
