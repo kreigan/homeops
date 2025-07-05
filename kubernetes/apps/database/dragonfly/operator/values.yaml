@@ -1,0 +1,22 @@
+---
+replicaCount: 1
+
+manager:
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+serviceMonitor:
+  enabled: false
+
+grafanaDashboard:
+  enabled: false
+  folder: Data
+  annotations:
+    name: grafana_folder
+  labels:
+    name: grafana_dashboard

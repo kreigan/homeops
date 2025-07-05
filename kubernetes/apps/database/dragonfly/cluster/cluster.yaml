@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../../../../.schemas/dragonfly-cluster-schema.json
+---
+apiVersion: dragonflydb.io/v1alpha1
+kind: Dragonfly
+metadata:
+  name: dragonfly-cluster
+spec:
+  imageName: ghcr.io/dragonflydb/dragonfly:v1.31.0@sha256:25296d2dc4580512521c7c720d90b757fd02a693c9188ae71a9932637c789635
+  replicas: 1
+
+  args:
+    - --maxmemory=$(MAX_MEMORY)Mi
+    - --proactor_threads=2
+    - --cluster_mode=emulated
+    - --lock_on_hashtags
+
+  env:
+    - name: MAX_MEMORY
+      valueFrom:
+        resourceFieldRef:
+          resource: limits.memory
+          divisor: 1Mi
+
+  authentication:
+    passwordFromSecret:
+      key: dragonfly-cluster
+      name: password
+
+  resources:
+    requests:
+      cpu: 500m
+      memory: 256Mi
+    limits:
+      cpu: 2
+      memory: 2Gi
+
+  snapshot:
+    cron: "*/5 * * * *"
+    persistentVolumeClaimSpec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 10Gi
+
+  topologySpreadConstraints:
+    - maxSkew: 1
+      topologyKey: "kubernetes.io/hostname"
+      whenUnsatisfiable: "DoNotSchedule"
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/part-of: dragonfly
