@@ -5,7 +5,7 @@ kind: Dragonfly
 metadata:
   name: dragonfly-cluster
 spec:
-  image: ghcr.io/dragonflydb/dragonfly:v1.31.0@sha256:32b1f065a8ba99842b4ffe6d854a9a50fc0e47e65b5cdd7f5d6244b0f3b4c9c8
+  image: ghcr.io/dragonflydb/dragonfly:v1.31.0@sha256:25296d2dc4580512521c7c720d90b757fd02a693c9188ae71a9932637c789635
   replicas: 1
 
   args:
