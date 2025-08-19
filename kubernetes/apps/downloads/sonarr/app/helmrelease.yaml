@@ -90,7 +90,7 @@ spec:
       media:
         type: nfs
         server: nfs.internal.kreigan.com
-        path: /storage/media
+        path: /storage
         globalMounts:
           - path: /data/nas-media
 

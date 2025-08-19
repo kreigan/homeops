@@ -130,7 +130,7 @@ spec:
       downloads:
         type: nfs
         server: nfs.internal.kreigan.com
-        path: /storage/media
+        path: /downloads
         globalMounts:
-          - path: /data/nas-media/Downloads/qbittorrent
-            subPath: Downloads/qbittorrent
+          - path: /data/nas-media/downloads/qbittorrent
+            subPath: torrent
