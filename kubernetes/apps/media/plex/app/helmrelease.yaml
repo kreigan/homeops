@@ -18,9 +18,9 @@ spec:
       plex:
         pod:
           securityContext:
-            runAsUser: 2000
-            runAsGroup: 2000
-            fsGroup: 2000
+            runAsUser: 1500
+            runAsGroup: 1500
+            fsGroup: 1500
             fsGroupChangePolicy: "OnRootMismatch"
             supplementalGroups:
               - 44
@@ -100,12 +100,11 @@ spec:
       nfs-nas-media:
         type: nfs
         server: nfs.internal.kreigan.com
-        path: /storage/media
+        path: /media
         advancedMounts:
           plex:
             app:
-              - path: /data/nas-media/Library
-                subPath: Library
+              - path: /data/nas-media/library
 
     route:
       app:

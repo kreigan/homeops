@@ -81,7 +81,7 @@ spec:
       media:
         type: nfs
         server: nfs.internal.kreigan.com
-        path: /storage/media
+        path: /downloads
         advancedMounts:
           cross-seed:
             app:

@@ -116,10 +116,12 @@ spec:
       downloads:
         type: nfs
         server: nfs.internal.kreigan.com
-        path: /storage/media
-        globalMounts:
-          - path: /data/nas-media/Downloads/qbittorrent
-            subPath: Downloads/qbittorrent
+        path: /downloads
+        advancedMounts:
+          qbittorrent:
+            app:
+              - path: /data/nas-media/downloads/qbittorrent
+                subPath: torrent
       gluetun-scripts:
         type: configMap
         name: gluetun-scripts
