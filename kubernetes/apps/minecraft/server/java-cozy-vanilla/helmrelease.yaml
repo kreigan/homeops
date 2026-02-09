@@ -1,0 +1,83 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: java-cozy-vanilla
+spec:
+  chartRef:
+    kind: OCIRepository
+    name: minecraft
+  interval: 30m
+  values:
+    controllers:
+      server:
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        pod:
+          securityContext:
+            fsGroup: &gid 2000
+            fsGroupChangePolicy: "OnRootMismatch"
+            runAsGroup: *gid
+            runAsNonRoot: true
+            runAsUser: &pid 2000
+
+        containers:
+          server:
+            image:
+              repository: itzg/minecraft-server
+              tag: java21-graalvm
+            env:
+              EULA: "TRUE"
+              UID: *pid
+              GID: *gid
+              CF_API_KEY_FILE: /cf-token/token
+              RCON_PASSWORD_FILE: /rcon/password
+            envFrom:
+              - configMapRef:
+                  name: java-cozy-vanilla-settings
+
+            probes:
+              liveness: &probe
+                enabled: true
+                spec:
+                  initialDelaySeconds: 60
+                  periodSeconds: 5
+                  failureThreshold: 20
+                  successThreshold: 1
+                  timeoutSeconds: 1
+              readiness: *probe
+
+            resources:
+              limits:
+                cpu: 4000m
+                memory: 8Gi
+
+    service:
+      app:
+        annotations:
+          mc-router.itzg.me/externalServerName: "mc-cozy-vanilla.kreigan.com"
+        ports:
+          minecraft:
+            port: 25565
+            protocol: TCP
+
+    persistence:
+      cf-token:
+        type: secret
+        name: curseforge
+
+      rcon:
+        type: secret
+        name: rcon
+
+      data:
+        type: nfs
+        path: /volume1/cluster-data/minecraft/cozy-vanilla
+        server: nfs.int.kreigan.com
+
+      modpacks:
+        type: nfs
+        path: /volume1/cluster-data/minecraft/modpacks
+        server: nfs.int.kreigan.com
