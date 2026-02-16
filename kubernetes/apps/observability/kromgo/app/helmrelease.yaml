@@ -92,8 +92,8 @@ spec:
         hostnames:
           - kromgo.kreigan.com
         parentRefs:
-          - name: external
-            namespace: kube-system
-            sectionName: https
+          - name: envoy-internal
+            namespace: network
+            sectionName: http
         rules:
           - backendRefs: [{}]
