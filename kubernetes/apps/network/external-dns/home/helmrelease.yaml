@@ -3,33 +3,33 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: externaldns-bind
+  name: externaldns-home
 spec:
   interval: 30m
   chart:
     spec:
       chart: external-dns
-      version: 1.16.1
+      version: 1.20.0
       sourceRef:
         kind: HelmRepository
-        name: external-dns-bind
+        name: external-dns-home
       interval: 30m
 
   values:
-    fullnameOverride: &name externaldns-bind
+    fullnameOverride: &name externaldns-home
     domainFilters:
-      - kreigan.com
+      - int.kreigan.com
     extraArgs:
       - --ignore-ingress-tls-spec
-      - --rfc2136-host=10.1.5.1
+      - --rfc2136-host=10.1.21.3
       - --rfc2136-port=53
-      - --rfc2136-zone=kreigan.com
+      - --rfc2136-zone=int.kreigan.com
       - --rfc2136-tsig-keyname=$(BIND_TSIG_KEYNAME)
       - --rfc2136-tsig-secret=$(BIND_TSIG_SECRET)
       - --rfc2136-tsig-secret-alg=$(BIND_TSIG_ALG)
       - --rfc2136-tsig-axfr
     podAnnotations:
-      secret.reloader.stakater.com/reload: external-dns-bind-secret
+      secret.reloader.stakater.com/reload: &secret externaldns-home
     provider:
       name: rfc2136
     policy: sync
@@ -37,17 +37,17 @@ spec:
       - name: BIND_TSIG_KEYNAME
         valueFrom:
           secretKeyRef:
-            name: external-dns-bind-secret
+            name: *secret
             key: keyname
       - name: BIND_TSIG_SECRET
         valueFrom:
           secretKeyRef:
-            name: external-dns-bind-secret
+            name: *secret
             key: secret
       - name: BIND_TSIG_ALG
         valueFrom:
           secretKeyRef:
-            name: external-dns-bind-secret
+            name: *secret
             key: algorithm
     resources:
       requests:
@@ -61,7 +61,7 @@ spec:
       - gateway-httproute
       - service
     triggerLoopOnEvent: true
-    txtOwnerId: main
+    txtOwnerId: home-cluster
     txtPrefix: "k8s."
 
   postRenderers:

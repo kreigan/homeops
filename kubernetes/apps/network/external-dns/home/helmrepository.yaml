@@ -3,7 +3,7 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: external-dns-bind
+  name: external-dns-home
   namespace: network
 spec:
   interval: 30m
