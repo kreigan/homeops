@@ -2,11 +2,10 @@
 # yaml-language-server: $schema=https://json.schemastore.org/kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-namespace: network
-resources:
-  - ./echo-server/ks.yaml
-  - ./envoy-gateway/ks.yaml
-  - ./external-dns/ks.yaml
+namespace: minecraft
 components:
-  - ../../components/namespace
   - ../../components/flux/alerts
+resources:
+  - ./namespace.yaml
+  - ./router/ks.yaml
+  - ./server/ks.yaml
