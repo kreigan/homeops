@@ -36,7 +36,7 @@ spec:
           kromgo:
             image:
               repository: ghcr.io/kashalls/kromgo
-              tag: v0.7.2
+              tag: v0.7.5
             env:
               PROMETHEUS_URL: http://prometheus-operated.observability.svc.cluster.local:9090
               SERVER_HOST: 0.0.0.0
@@ -92,8 +92,8 @@ spec:
         hostnames:
           - kromgo.kreigan.com
         parentRefs:
-          - name: external
-            namespace: kube-system
-            sectionName: https
+          - name: envoy-internal
+            namespace: network
+            sectionName: http
         rules:
           - backendRefs: [{}]

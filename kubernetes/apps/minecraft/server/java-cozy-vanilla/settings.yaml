@@ -1,0 +1,39 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: java-cozy-vanilla-settings
+data:
+  VERSION: 1.21.11
+  MOD_PLATFORM: MODRINTH
+  MODRINTH_LOADER: fabric
+  MODRINTH_MODPACK: /modpacks/kreigan-cozy-vanilla-1.21.11-1.0.0.mrpack
+  MODRINTH_FORCE_SYNCHRONIZE: "true"
+  # no idea why server loader excludes this by default so have to force it
+  MODRINTH_FORCE_INCLUDE_FILES: |
+    mcwbiomesoplenty
+
+  MEMORY: 6G
+  ENABLE_JMX: "true"
+  USE_MEOWICE_FLAGS: "true"
+  USE_MEOWICE_GRAALVM_FLAGS: "true"
+
+  MOTD: |
+    Kreigan's Java server %VERSION%
+    running %MODPACK_NAME% 1.0.0
+
+  DIFFICULTY: NORMAL
+  MODE: survival
+
+  OPS: |
+    98e70e34-cfa7-4a4a-9b7e-09df923309a4
+
+  ENFORCE_WHITELIST: "true"
+  WHITELIST: |
+    3ff81ded-b1f8-4206-bc4c-94719f0674ce
+
+  ALLOW_FLIGHT: "true"
+  ENABLE_COMMAND_BLOCK: "true"
+  MAX_PLAYERS: "5"
+  NETWORK_COMPRESSION_THRESHOLD: "512"
+  VIEW_DISTANCE: "10"
