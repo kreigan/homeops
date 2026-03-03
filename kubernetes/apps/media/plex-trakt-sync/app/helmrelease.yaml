@@ -10,19 +10,14 @@ spec:
     name: app-template
     namespace: flux-system
   interval: 30m
-  dependsOn:
-    - name: openebs
-      namespace: openebs
-    - name: plex
-      namespace: media
   values:
     controllers:
       plex-trakt-sync:
         pod:
           securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-            fsGroup: 1000
+            runAsUser: 2000
+            runAsGroup: 2000
+            fsGroup: 2000
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
@@ -33,17 +28,17 @@ spec:
             args:
               - watch
             env:
-              PLEX_BASEURL: http://plex.media.svc.cluster.local:32400
-              PLEX_LOCALURL: http://plex.media.svc.cluster.local:32400
+              PLEX_BASEURL: https://plex.kreigan.com
+              PLEX_LOCALURL: https://plex.kreigan.com
               PLEX_USERNAME:
                 valueFrom:
                   secretKeyRef:
-                    name: trakt-sync-secret
+                    name: trakt-sync
                     key: PLEX_USERNAME
               TRAKT_USERNAME:
                 valueFrom:
                   secretKeyRef:
-                    name: trakt-sync-secret
+                    name: trakt-sync
                     key: TRAKT_USERNAME
             probes:
               liveness:
@@ -61,15 +56,17 @@ spec:
 
     persistence:
       config:
-        enabled: true
-        existingClaim: plex-trakt-sync-config
+        type: nfs
+        path: /volume1/cluster-data/media/plex-trakt-sync
+        server: nfs.int.kreigan.com
         advancedMounts:
           plex-trakt-sync:
             app:
               - path: /app/config
+
       config-yaml:
         type: configMap
-        name: plex-tract-sync
+        name: plex-trakt-sync
         globalMounts:
           - path: /app/config/config.yml
             subPath: config.yml
