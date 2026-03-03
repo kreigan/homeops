@@ -42,7 +42,7 @@ spec:
               - sync
             envFrom:
               - secretRef:
-                  name: recyclarr-secret
+                  name: recyclarr
             resources:
               requests:
                 cpu: 5m
@@ -58,11 +58,10 @@ spec:
 
     persistence:
       config:
-        existingClaim: recyclarr-config
-        advancedMounts:
-          recyclarr:
-            app:
-              - path: /config
+        type: nfs
+        path: /volume1/cluster-data/downloads/recyclarr
+        server: nfs.int.kreigan.com
+
       config-file:
         type: configMap
         name: recyclarr

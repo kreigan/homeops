@@ -10,11 +10,6 @@ spec:
     name: app-template
     namespace: flux-system
   interval: 30m
-  dependsOn:
-    - name: openebs
-      namespace: openebs
-    - name: plex
-      namespace: media
   values:
     controllers:
       tautulli:
@@ -58,17 +53,17 @@ spec:
 
     persistence:
       config:
-        existingClaim: tautulli-config
-        globalMounts:
-          - path: /config
+        type: nfs
+        path: /volume1/cluster-data/media/tautulli
+        server: nfs.int.kreigan.com
 
     route:
       app:
         hostnames:
-          - tautulli.kreigan.com
+          - tautulli.int.kreigan.com
         parentRefs:
-          - name: internal
-            namespace: kube-system
-            sectionName: https
+          - name: envoy-internal
+            namespace: network
+            sectionName: http
         rules:
           - backendRefs: [{}]

@@ -10,19 +10,14 @@ spec:
     name: app-template
     namespace: flux-system
   interval: 30m
-  dependsOn:
-    - name: openebs
-      namespace: openebs
-    - name: plex
-      namespace: media
   values:
     controllers:
       maintainerr:
         pod:
           securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-            fsGroup: 1000
+            runAsUser: 2000
+            runAsGroup: 2000
+            fsGroup: 2000
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
@@ -51,21 +46,23 @@ spec:
       app:
         ports:
           http:
-            port: &port 6246
+            port: 6246
 
     persistence:
       data:
-        existingClaim: maintainerr-data
+        type: nfs
+        path: /volume1/cluster-data/media/maintainerr
+        server: nfs.int.kreigan.com
         globalMounts:
           - path: /opt/data
 
     route:
       app:
         hostnames:
-          - maintainerr.kreigan.com
+          - maintainerr.int.kreigan.com
         parentRefs:
-          - name: internal
-            namespace: kube-system
-            sectionName: https
+          - name: envoy-internal
+            namespace: network
+            sectionName: http
         rules:
           - backendRefs: [{}]

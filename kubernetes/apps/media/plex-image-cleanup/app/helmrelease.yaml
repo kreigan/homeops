@@ -10,9 +10,6 @@ spec:
     name: app-template
     namespace: flux-system
   interval: 30m
-  dependsOn:
-    - name: plex
-      namespace: media
   values:
     controllers:
       plex-image-cleanup:
@@ -25,35 +22,19 @@ spec:
           failedJobsHistory: 1
           successfulJobsHistory: 0
 
-        pod:
-          affinity:
-            podAffinity:
-              requiredDuringSchedulingIgnoredDuringExecution:
-                - labelSelector:
-                    matchExpressions:
-                      - key: app.kubernetes.io/name
-                        operator: In
-                        values:
-                          - plex
-                  topologyKey: kubernetes.io/hostname
-          securityContext:
-            runAsUser: 2000
-            runAsGroup: 2000
-            runAsNonRoot: true
-
         containers:
           app:
             image:
               repository: docker.io/meisnate12/plex-image-cleanup
               tag: v1.0.2
             env:
-              PLEX_URL: http://plex.media.svc.cluster.local:32400
+              PLEX_URL: https://plex.kreigan.com
               PLEX_TOKEN:
                 valueFrom:
                   secretKeyRef:
-                    name: plex-image-cleanup-secret
+                    name: plex-image-cleanup
                     key: PLEX_TOKEN
-              PLEX_PATH: /data/plex_config/Library/Application Support/Plex Media Server
+              PLEX_PATH: /data/plex_config/Library/Plex Media Server
               MODE: remove
               PHOTO_TRANSCODER: true
             probes:
@@ -70,7 +51,6 @@ spec:
               limits:
                 memory: 128Mi
             securityContext:
-              allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities:
                 drop:
@@ -83,15 +63,21 @@ spec:
           plex-image-cleanup:
             app:
               - path: /config
+
       plex-config:
-        existingClaim: plex-config
+        type: nfs
+        server: &nfs nfs.int.kreigan.com
+        path: &plex-nfs /volume1/Plex/
         advancedMounts:
           plex-image-cleanup:
             app:
               - path: /data/plex_config
+
       plex-cache:
-        existingClaim: plex-cache
+        type: nfs
+        server: *nfs
+        path: *plex-nfs
         advancedMounts:
           plex-image-cleanup:
             app:
-              - path: /data/plex_config/Library/Application Support/Plex Media Server/Cache
+              - path: /data/plex_config/Library/Plex Media Server/Cache
