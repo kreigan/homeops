@@ -28,7 +28,7 @@ spec:
           app:
             image:
               repository: itzg/mc-router
-              tag: "1.44.0"
+              tag: "1.45.0"
             args:
               - --in-kube-cluster
             env:
